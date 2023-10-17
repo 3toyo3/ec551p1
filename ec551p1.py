@@ -173,13 +173,26 @@ def sop_c():
 		canonicals.append(canoneqn) #TODO or return canonical
 	return canonicals
 
-def pos_c():
+def pos_c(): #TODO make into variable names
 	canonicals = []
 	for entry in names:
-		#ccc
-		#demorgans
+		canonicaleqn = "G=("
+		for row in names[entry]:
+			print(row)
+			row_dupe = '+'.join(row)
+			for i in range(len(row_dupe)):
+				if row_dupe[i] == 1:
+					row_dupe[i] = 0
+				elif row_dupe[i] == 0:
+					row_dupe[i] = 1
+				else
+					pass
+			canonicaleqn += row_dupe +")("
+		canonicaleqn = canonicaleqn[:-1]
+		canonical.append(canonicaleqn)
+	return canonicals
 
-def demorgan(): 
+#def demorgan(): #idk if i need to do this afterall
 
 def inverse(output): #input the sop or pos things
 	inverts = []
@@ -189,3 +202,5 @@ def inverse(output): #input the sop or pos things
 	return inverts
 
 def minimizer(): #shout out quinemckluskey
+
+#TODO onset minterms, onset maxterms, 11 and 12
