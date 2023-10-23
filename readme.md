@@ -1,5 +1,15 @@
 # Logic Synthesis Engine
 
+## About
+This program takes a blif file[^1], and based on user commands can:
+1. Output the canonical function (POS/SOP)
+2. Output the inverse canonical function (POS/SOP)
+3. Minimize the function and output the resulting function and how many terms saved (POS/SOP)
+4. Print the # of prime implicants, essential prime implicants, onset maxterms and onset minterms
+5. Output a graphical Kmap and tabular method representation
+
+A few limitations of this program is that it doesn't recognize blif syntax outside of: names, model, input, outputs. It also can't work with functions that have more than four inputs. 
+
 ## Files
 **ec551p1.py :**  This is the program which is responsible for taking user input and runs the canonical outputs
 
@@ -8,16 +18,6 @@
 
 
 There are also two demo blif files. The bool.blif was arbitarily generated and checked by hand. The adder.blif comes from blif documentations. [^1]
-
-## About
-This program takes a blif file, and based on user commands can:
-1. Output the canonical function (POS/SOP)
-2. Output the inverse canonical function (POS/SOP)
-3. Minimize the function and output the resulting function and how many terms saved (POS/SOP)
-4. Print the # of prime implicants, essential prime implicants, onset maxterms and onset minterms
-5. Output a graphical Kmap and tabular method representation
-
-A few limitations of this program is that it doesn't recognize blif syntax outside of: names, model, input, outputs. It also can't work with functions that have more than four inputs. 
 
 ## How to read the code
 The code is seperated into two modules simply due to time/collaboration reasons
