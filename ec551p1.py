@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 from collections import defaultdict
+from program1 import *
 
 # assumes that the file format is a certain way, as well as in the same directory
 # will output as blif in <blah blah .txt>
@@ -53,24 +54,41 @@ def main():
 	#6. return a minimized number of literals representation in pos
 	elif command == "6":
 		print("six")
+		print("Saved literals:")
+		sample_inv=prime_implicants(inv(truthtable))
+		sample_inv1=essential_prime_implicants(sample_inv)
+		print(format_pos(choose_terms(sample_inv,sample_inv1,inv(truthtable))))
 	#7. return the number of prime implicants
 	elif command == "7":
 		print("seven")
+		sample=prime_implicants(truthtable)
+		sample1=essential_prime_implicants(sample)
+		preserved_prime_implicants=sample.copy()
+		print("There are "+str(len(preserved_prime_implicants)+len(sample1))+" prime implicants")
+
 	#8. return the number of essential prime implicants
 	elif command == "8":
 		print("eight")
+		sample=prime_implicants(truthtable)
+		sample1=essential_prime_implicants(sample)
+		print("There are "+str(len(sample1))+" essential prime implicants")
 	#9. return number of on-set minterms
 	elif command == "9":
 		print("nine")
+		print('There are '+str(count_terms(truthtable)[0])+' On-set minterms')
 	#10. return number of on-set maxterms
 	elif command == "10":
 		print("ten")
-	#11. prints out KMap representation
+		print('There are '+str(count_terms(truthtable)[1])+' On-set maxterms')
+	#11. K Map
 	elif command == "11":
-		print("eleven")
-	#12. prints out tabular method table representation
+		print_truthtable(truthtable)
+	#12. Coverage Table
 	elif command == "12":
-		print("twelve")
+		sample=prime_implicants(truthtable)
+		sample1=essential_prime_implicants(sample)
+		preserved_prime_implicants=sample.copy()
+		print_coverage_table(preserved_prime_implicants, sample1,truthtable)
 	else:
 		print("Unknown command: ", command)
 		sys.exit()
