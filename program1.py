@@ -1,29 +1,5 @@
 import numpy as np
 
-
-#For testing
-#truthtable=np.zeros((2,2,2,2))
-#truthtable[0][0][0][0]=0
-#truthtable[0][0][0][1]=0
-#truthtable[0][0][1][0]=0
-#truthtable[0][0][1][1]=0
-
-#truthtable[0][1][0][0]=0
-#truthtable[0][1][0][1]=0
-#truthtable[0][1][1][0]=1
-#truthtable[0][1][1][1]=0
-
-#truthtable[1][0][0][0]=1
-#truthtable[1][0][0][1]=0
-#truthtable[1][0][1][0]=0
-#truthtable[1][0][1][1]=1
-
-#truthtable[1][1][0][0]=0
-#truthtable[1][1][0][1]=1
-#truthtable[1][1][1][0]=0
-#truthtable[1][1][1][1]=0
-
-
 #This function counts the number of on-set minterms and maxterms
 def count_terms(truthtable):
     countmin=0
@@ -158,7 +134,6 @@ def prime_implicants(truthtable):
     three_var_terms=[]
     two_var_terms=[]
 
-
     #Use four for loops to loop through the entire truth table
     for A in range(2):
         for B in range(2):
@@ -173,8 +148,7 @@ def prime_implicants(truthtable):
                         if (truthtable[flip(A)][B][C][D]==1):
                             foundimplicant=True
                             if binary_to_dec(flip(A),B,C,D)<binary_to_dec(A,B,C,D):
-                                three_var_terms.append([-1,B,C,D])
-                        
+                                three_var_terms.append([-1,B,C,D])       
                         
                         #Check adjacent square by flipping B
                         if (truthtable[A][flip(B)][C][D]==1):
@@ -197,8 +171,6 @@ def prime_implicants(truthtable):
                         #If the square never found an implicant, then the cube is a prime implicant
                         if(not foundimplicant):
                             prime_implicants.append([A,B,C,D])
-
-
 
     #######################Looking for combinations of 3 variable terms############################
     #These for loops allow us to compare every term to every other term once
@@ -304,7 +276,6 @@ def generate_coverage_table(minterms,prime_implicants):
     #Setup a coverage table
     coveragetable=np.zeros((len(prime_implicants),len(minterms)))
     
-
     #See which minterms are covered by each implicant
     for implicant in range(len(prime_implicants)):
         for minterm in range(len(minterms)):
@@ -341,12 +312,8 @@ def essential_prime_implicants(prime_implicants, truthtable):
                     if truthtable[A][B][C][D]==1:
                         minterms.append([A,B,C,D])
 
-    
-
     #Generate a coverage table
     coveragetable=generate_coverage_table(minterms,prime_implicants)
-
-    
 
     minterm_index=0
     while 1:
@@ -360,47 +327,36 @@ def essential_prime_implicants(prime_implicants, truthtable):
         working_column= coveragetable[:,minterm_index]
         
         if sum(working_column)==1:
-            
-
-            
           
             #The implicant that covers it is a prime implicant
             index=np.where(coveragetable[:,minterm_index]==1)
             
 
-            
+            #add to the list of essential prime implicants
             essential_prime_implicants.append(prime_implicants[index[0][0]])
-            
-            
 
             #Get rid of the minterms covered by the prime implicant
             minterms_covered_index=np.where(coveragetable[index[0][0],:]==1)
- 
+
+            #Remove the covered minterms
             minterms_copy=minterms.copy()
             for i in range(0,len(minterms_covered_index[0])):
                 
                 minterms_copy.remove(minterms[minterms_covered_index[0][i]])
-            
-                
 
             minterms=minterms_copy
                 
-            
             #Get rid of the prime implicant
             prime_implicants.remove(prime_implicants[index[0][0]])
 
             #Generate a new coveragetable
-            
             coveragetable=generate_coverage_table(minterms,prime_implicants)
-            
             minterm_index=0
 
         else:
             minterm_index=minterm_index+1
 
-
     return essential_prime_implicants
-
 
 def choose_terms(prime_implicants,essential_prime_implicants,truthtable):
 
@@ -426,16 +382,10 @@ def choose_terms(prime_implicants,essential_prime_implicants,truthtable):
             if contains(essential_prime_implicants[j],minterms[i]):
                 covered_by_essential=True
                 
-
         if not covered_by_essential:
             minterms_remaining.append(minterms[i])
-            
-
-        
 
     #Now, use prime implicants to cover the remaining minterms
-    
-    
     while len(minterms_remaining)>0:
 
         #This index will keep track of which prime implicant we are using
@@ -486,12 +436,15 @@ def print_coverage_table(p_implicants, ep_implicants,truthtable):
                     if truthtable[A][B][C][D]==1:
                         minterms.append([A,B,C,D])
 
-    
+    #Generate a coverage table
     coveragetable=generate_coverage_table(minterms,p_implicants)
 
     header='         '
-    
+
+    #It will be necessary to stor how wide the minterms are in order to print rows later
     headerlengths=[]
+
+    #Build the header and print it
     for i in range(0,len(minterms)):
         header1=''
         header1+=binary_to_string(minterms[i][0],minterms[i][1],minterms[i][2],minterms[i][3])[0]
@@ -507,6 +460,8 @@ def print_coverage_table(p_implicants, ep_implicants,truthtable):
 
     print(header)
 
+    #Build each line
+    #If the prime implicant covers a minterm, we place an X at the intersection of the appropriate row and column
     for i in range(0, len(p_implicants)):
         line=''
         line+= binary_to_string(p_implicants[i][0],p_implicants[i][1],p_implicants[i][2],p_implicants[i][3])[0]
@@ -520,11 +475,11 @@ def print_coverage_table(p_implicants, ep_implicants,truthtable):
                 line+='X'
             else:
                 line+=' '
+
+            #Handle varying widths
             for k in range(0,headerlengths[j]-1):
                 line+=' '
             
-                
-
         print(line)
     return
 
