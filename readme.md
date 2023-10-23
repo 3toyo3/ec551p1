@@ -3,7 +3,9 @@
 ## Files
 **ec551p1.py :**  This is the program which is responsible for taking user input and runs the canonical outputs
 
+
 **program1.py :**  This program generates graphics and minimizes expressions using the tabular method.
+
 
 There are also two demo blif files. The bool.blif was arbitarily generated and checked by hand. The adder.blif comes from blif documentations. [^1]
 
