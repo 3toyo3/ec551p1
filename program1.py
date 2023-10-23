@@ -328,7 +328,7 @@ def generate_coverage_table(minterms,prime_implicants):
     
     return coveragetable
 
-def essential_prime_implicants(prime_implicants):
+def essential_prime_implicants(prime_implicants, truthtable):
 
     essential_prime_implicants=[]
 

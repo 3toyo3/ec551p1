@@ -3,11 +3,6 @@ import numpy as np
 from collections import defaultdict
 from program1 import *
 
-# assumes that the file format is a certain way, as well as in the same directory
-# will output as blif in <blah blah .txt>
-
-#TODO: cleanup 5-12 properly, add comments
-
 model = ""
 inputs = []
 outputs = []
@@ -31,61 +26,87 @@ def main():
 	#1. return design as a canonical sop
 	if command == "1":
 		sops = sop_c()
+		print("Canonical SOP:")
 		print(sops)
 	#2. return design as a canonical pos
 	elif command == "2":
 		poss = pos_c()
+		print("Canonical POS:")
 		print(poss)
 	#3. return design as a inverse canonical sop
 	elif command == "3":
 		sops = sop_c()
 		inverted = inverse_sop(sops)
+		print("Inverted SOP:")
 		print(inverted)
 	#4. return design as a inverse canonical pos
 	elif command == "4":
 		poss = pos_c()
 		inverted = inverse_pos(poss)
+		print("Inverted POS:")
 		print(inverted)
 	#5. return a minimized number of literals representation in sop
 	elif command == "5":
-		print("five")
+		print("Minimized SOP(s):")
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			sample = prime_implicants(names_tt[entry])
+			sample1 = essential_prime_implicants(sample,truthtable)
+			preserved_prime_implicants = sample.copy()
+			print(format_sop(choose_terms(sample,sample1,truthtable)))
 	#6. return a minimized number of literals representation in pos
 	elif command == "6":
-		print("six")
-		print("Saved literals:")
-		sample_inv=prime_implicants(inv(truthtable))
-		sample_inv1=essential_prime_implicants(sample_inv)
-		print(format_pos(choose_terms(sample_inv,sample_inv1,inv(truthtable))))
+		print("Minimized POS(s):")
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			print("Saved literals:")
+			sample_inv=prime_implicants(inv(truthtable))
+			sample_inv1=essential_prime_implicants(sample_inv,truthtable)
+			print(format_pos(choose_terms(sample_inv,sample_inv1,inv(truthtable))))
 	#7. return the number of prime implicants
 	elif command == "7":
-		print("seven")
-		sample=prime_implicants(truthtable)
-		sample1=essential_prime_implicants(sample)
-		preserved_prime_implicants=sample.copy()
-		print("There are "+str(len(preserved_prime_implicants)+len(sample1))+" prime implicants")
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			sample=prime_implicants(truthtable)
+			sample1=essential_prime_implicants(sample,truthtable)
+			preserved_prime_implicants=sample.copy()
+			print("There are "+str(len(preserved_prime_implicants)+len(sample1))+" prime implicants for: "+entry)
 	#8. return the number of essential prime implicants
 	elif command == "8":
-		print("eight")
-		sample=prime_implicants(truthtable)
-		sample1=essential_prime_implicants(sample)
-		print("There are "+str(len(sample1))+" essential prime implicants")
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			sample=prime_implicants(truthtable)
+			sample1=essential_prime_implicants(sample,truthtable)
+			print("There are "+str(len(sample1))+" essential prime implicants for: "+entry)
 	#9. return number of on-set minterms
 	elif command == "9":
-		print("nine")
-		print('There are '+str(count_terms(truthtable)[0])+' On-set minterms')
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			print('There are '+str(count_terms(truthtable)[0])+' On-set minterms for: '+entry)
 	#10. return number of on-set maxterms
 	elif command == "10":
-		print("ten")
-		print('There are '+str(count_terms(truthtable)[1])+' On-set maxterms')
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			print('There are '+str(count_terms(truthtable)[1])+' On-set maxterms for: '+entry)
 	#11. K Map
 	elif command == "11":
-		print_truthtable(truthtable)
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			print(" KMap for: "+entry)
+			print_truthtable(truthtable)
+			print()
+			print()
 	#12. Coverage Table
 	elif command == "12":
-		sample=prime_implicants(truthtable)
-		sample1=essential_prime_implicants(sample)
-		preserved_prime_implicants=sample.copy()
-		print_coverage_table(preserved_prime_implicants, sample1,truthtable)
+		for entry in names_tt:
+			truthtable = names_tt[entry]
+			sample=prime_implicants(truthtable)
+			sample1=essential_prime_implicants(sample,truthtable)
+			preserved_prime_implicants=sample.copy()
+			print(" Coverage table for: "+entry)
+			print_coverage_table(preserved_prime_implicants, sample1,truthtable)
+			print()
+			print()
 	else:
 		print("Unknown command: ", command)
 		sys.exit()
@@ -100,17 +121,15 @@ def parser(filename):
 		for line in file:
 			if line.startswith(".model"):
 				model += line[len(".model"):].strip()
-				print("Model:" + model)
+				print("Model: " + model)
 			elif line.startswith(".inputs"):
 				ins = line[len(".inputs"):].strip().split()
 				inputs.extend(ins)
-				print("Inputs:")
-				print(inputs)
+				print("Inputs: " + ", ".join(str(i) for i in inputs))
 			elif line.startswith(".outputs"):
 				outs = line[len(".outputs"):].strip().split()
 				outputs.extend(outs)
-				print("Outputs:")
-				print(outputs)
+				print("Outputs: "+ ", ".join(str(i) for i in outputs))
 			#store each "module" of blif in the case of multiple outputs
 			elif line.startswith(".names"):
 				currentname = line[len(".names"):].strip()
@@ -120,10 +139,11 @@ def parser(filename):
 				names[currentname].append(line.rstrip())
 			else:
 				pass
-	truet() # finish cleaning by turning rows into tt
-	tt_translate()
+	truet() #string/list representation for names dictionary
+	tt_translate() #array representation for names_tt dictionary
+	print()
 
-def truet(): #make truth table for each name, clean up lines and expand to master copy :)
+def truet(): #make truth table for each name, clean up lines and expand for list representation
 	global names
 	for entry in names:
 		truet = []
@@ -140,7 +160,7 @@ def truet(): #make truth table for each name, clean up lines and expand to maste
 		for row in ref_truet:
 			if '-' in row:
 				expand_row = list(row)
-				truet.remove(row) #check that this removes properly IE not messing up index
+				truet.remove(row)
 
 				#replace multiple dont cares
 				for i, char in enumerate(expand_row):
@@ -191,9 +211,9 @@ def tt_translate(): #translates from list/string representation to 4D array
 					truthtable[A][1][1][1] = 1
 					truthtable[A][1][1][0] = 1
 			else:
-				print("Something is wrong line 193")
+				print("Something is wrong in TT translation")
 
-		elif len(names[entry][0] == 4): #if equal to 4
+		elif len(names[entry][0]) == 4: #if equal to 4
 			for row in names[entry]:
 				A = int(row[0])
 				B = int(row[1])
@@ -220,7 +240,7 @@ def sop_c(): #turns truet into a string with accurate variable names
 				elif row[i] == '0': 
 					row_dupe[i] = variables[i] + "'*"
 				else:
-					print("Something is wrong!!")
+					print("Something is wrong in SOP generation")
 				if i == len(row) -1:
 					row_dupe[i] = row_dupe[i][:-1] #removes last * by slicing
 			canoneqn +=''.join(row_dupe)+" + "
