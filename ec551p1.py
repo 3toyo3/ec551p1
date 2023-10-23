@@ -28,7 +28,6 @@ def main():
 	# set up program from file
 	parser(filename)
 
-	#TODO clean outputs here, check input outputs
 	#1. return design as a canonical sop
 	if command == "1":
 		sops = sop_c()
@@ -38,24 +37,22 @@ def main():
 		poss = pos_c()
 		print(poss)
 	#3. return design as a inverse canonical sop
-	elif command == "3":   #TODO check
+	elif command == "3":
 		sops = sop_c()
 		print(sops)
-		inverted = inverse(sops)
+		inverted = inverse_sop(sops)
 		print(inverted)
 	#4. return design as a inverse canonical pos
 	elif command == "4":
 		poss = pos_c()
-		inverted = inverse(poss)
+		inverted = inverse_pos(poss)
 		print(inverted)
 	#5. return a minimized number of literals representation in sop
 	elif command == "5":
 		print("five")
-		print("Saved literals:")
 	#6. return a minimized number of literals representation in pos
 	elif command == "6":
 		print("six")
-		print("Saved literals:")
 	#7. return the number of prime implicants
 	elif command == "7":
 		print("seven")
@@ -68,10 +65,10 @@ def main():
 	#10. return number of on-set maxterms
 	elif command == "10":
 		print("ten")
-	#11. ???
+	#11. prints out KMap representation
 	elif command == "11":
 		print("eleven")
-	#12. ???
+	#12. prints out tabular method table representation
 	elif command == "12":
 		print("twelve")
 	else:
@@ -99,16 +96,13 @@ def parser(filename):
 				outputs.extend(outs)
 				print("Outputs:")
 				print(outputs)
-			#store each "module" of blif
+			#store each "module" of blif in the case of multiple outputs
 			elif line.startswith(".names"):
 				currentname = line[len(".names"):].strip()
-				#print(currentname)
 			elif line.startswith(".end"):
 				break
 			elif currentname is not None:
-				#print("Current line: "+ line )
 				names[currentname].append(line.rstrip())
-				#print(names[currentname])
 			else:
 				pass
 	truet() # finish cleaning by turning rows into tt
@@ -117,49 +111,38 @@ def truet(): #make truth table for each name, clean up lines and expand to maste
 	global names
 	for entry in names:
 		truet = []
-		#print(entry)
-
 		#get true values of the chart
 		for lines in names[entry]:
 			cleanline = lines.rstrip()
-			#print("Cleaned line: "+ cleanline)
 			if cleanline.endswith('1'):
 				cleanline = cleanline[:-1].rstrip()
-				#print(cleanline, " with True removed")
-				tt.append(cleanline)
-		#print("Truth table for :" + entry)
-		#print(tt)
-
+				truet.append(cleanline)
 		expanded=[]
 		ref_truet = truet[:]
 
-		#look for minimized functions
+		#expand dont cares
 		for row in ref_truet:
-			#print("Working on: " + row)
 			if '-' in row:
 				expand_row = list(row)
 				truet.remove(row) #check that this removes properly IE not messing up index
+
 				#replace multiple dont cares
 				for i, char in enumerate(expand_row):
 					if char == '-':
 						expand_row[i]='0'
-						#print(expand_row)
 						expanded.append(''.join(expand_row))
 						expand_row[i]='1'
 						expanded.append(''.join(expand_row))
-						#print(expand_row)
 		ref_truet.clear()
 
 		# add back expanded and put in ref for later
 		truet.extend(expanded)
 		print("Truth table for " + entry)
-		#print(tt)
 		truet = list(set(truet)) #removes dupes
 		print(truet)
-		#TODO maybe convert to binary
 		names[entry] = truet
 
-def tt_translate():
+def tt_translate(): #translates from list/string representation to 4D array
 	global names
 	global names_tt
 	for entry in names: # variable count check
@@ -193,7 +176,7 @@ def tt_translate():
 					truthtable[A][1][1][0] = 1
 			else:
 				print("Something is wrong line 193")
-	
+
 		elif len(names[entry][0] == 4): #if equal to 4
 			for row in names[entry]:
 				A = row[0]
@@ -205,32 +188,27 @@ def tt_translate():
 			printf("Representing this into a 4x4 array is beyond this program.")
 		names_tt[entry] = truthtable
 
-def sop_c():
+def sop_c(): #turns truet into a string with accurate variable names
 	global names
 	canonicals = []
 	for entry in names:
 		canoneqn = ""
-		variables = entry.upper().split()
-		#print(entry)
-		#print(names[entry])
-
-		canoneqn += f"{variables[-1]}="
+		variables = entry.split()
+		canoneqn += f"{variables[-1]}= "
 		variables.pop() #remove output
-
 		for row in names[entry]:
-			#print(row)
 			row_dupe = list(row)
-			#TODO think more
 			for i in range(len(row)): 
 				if row[i] == '1':
-					row_dupe[i] = variables[i]
-				elif row[i] == '0': #Lower to rep 0 value
-					row_dupe[i] = variables[i].lower()
+					row_dupe[i] = variables[i] + "*"
+				elif row[i] == '0': 
+					row_dupe[i] = variables[i] + "'*"
 				else:
 					print("Something is wrong!!")
-			#print(row_dupe)
-			canoneqn +=''.join(row_dupe)+"+"
-		canoneqn = canoneqn[:-1] #remove last plus
+				if i == len(row) -1:
+					row_dupe[i] = row_dupe[i][:-1] #removes last * by slicing
+			canoneqn +=''.join(row_dupe)+" + "
+		canoneqn = canoneqn[:-3] #removes last plus by slicing
 		canonicals.append(canoneqn)
 	return canonicals
 
@@ -256,20 +234,59 @@ def pos_c(): #TODO make into variable names FIX
 
 #def demorgan(): #idk if i need to do this afterall
 
-def inverse(output): #input the sop or pos things
+def inverse_sop(sops): #takes the SOP string and inverts the literals
 	inverts = []
-	for line in output: 
-		inverted = line.swapcase()
+	for line in sops:
+		inverted = ""
+		for i in range(len(line)-1):
+			if line[i].isalpha():
+				if i == 0: #checks if the output
+					new = line[i].casefold()
+					inverted+=new
+				elif line[i+1] == '*':
+					new = line[i]+"'" #end of literal
+					inverted+=new
+				elif line[i+1] == " ": #end of minterm
+					new = line[i]+"'"
+					inverted+=new
+				elif i == len(line)-1: #avoids skipping last letter
+					new = line[i]+"'"
+					inverted+=new
+				else:
+					new = line[i]
+					inverted+=new
+			elif line[i] == "'":
+				pass
+			else:
+				new = line[i]
+				inverted+=new
 		inverts.append(inverted)
 	return inverts
 
-#def minimizer(): #shout out quinemckluskey
-
-#TODO onset minterms, onset maxterms, 11 and 12
-
-# 11 kmap
-# 12 hazards
+def inverse_pos(poss): #takes the POS string and inverts the literals
+	inverts  = []
+	for line in poss:
+		inverted = ""
+		for i in range(len(line)-1):
+			if line[i].isalpha():
+				if i == 0:
+					new = line[i].casefold()
+					inverted+=new
+				elif line[i+1] == "+": #end of literal
+					new = line[i]+"'"
+					inverted+=new
+				elif line[i+1] == ")": #end of maxterm
+					new = line[i]+"'"
+					inverted+=new
+				else:
+					inverted+=line[i]
+			elif line[i] == "'":
+				pass
+			else:
+				inverted+=line[i]
+		inverted+=line[-1]
+		inverts.append(inverted)
+	return inverts
 
 if __name__ == "__main__":
 	main()
- 
