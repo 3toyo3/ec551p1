@@ -6,8 +6,7 @@ from program1 import *
 # assumes that the file format is a certain way, as well as in the same directory
 # will output as blif in <blah blah .txt>
 
-
-#TODO: quinemcklusky, sop, demorgans, address the todos and clean, make for a circuit
+#TODO: cleanup 5-12 properly, add comments
 
 model = ""
 inputs = []
@@ -40,7 +39,6 @@ def main():
 	#3. return design as a inverse canonical sop
 	elif command == "3":
 		sops = sop_c()
-		print(sops)
 		inverted = inverse_sop(sops)
 		print(inverted)
 	#4. return design as a inverse canonical pos
@@ -65,7 +63,6 @@ def main():
 		sample1=essential_prime_implicants(sample)
 		preserved_prime_implicants=sample.copy()
 		print("There are "+str(len(preserved_prime_implicants)+len(sample1))+" prime implicants")
-
 	#8. return the number of essential prime implicants
 	elif command == "8":
 		print("eight")
@@ -124,6 +121,7 @@ def parser(filename):
 			else:
 				pass
 	truet() # finish cleaning by turning rows into tt
+	tt_translate()
 
 def truet(): #make truth table for each name, clean up lines and expand to master copy :)
 	global names
@@ -155,9 +153,9 @@ def truet(): #make truth table for each name, clean up lines and expand to maste
 
 		# add back expanded and put in ref for later
 		truet.extend(expanded)
-		print("Truth table for " + entry)
+		#print("Truth table for " + entry)
 		truet = list(set(truet)) #removes dupes
-		print(truet)
+		#print(truet)
 		names[entry] = truet
 
 def tt_translate(): #translates from list/string representation to 4D array
@@ -166,24 +164,24 @@ def tt_translate(): #translates from list/string representation to 4D array
 	for entry in names: # variable count check
 		truthtable=np.zeros((2,2,2,2))
 		if len(names[entry][0]) < 4:
-			if len(names[entry][0] == 2):
+			if len(names[entry][0]) == 2:
 				for row in names[entry]:
-					A = row[0]
-					B = row[1]
+					A = int(row[0])
+					B = int(row[1])
 					truthtable[A][B][0][0] = 1
 					truthtable[A][B][0][1] = 1
 					truthtable[A][B][1][1] = 1
 					truthtable[A][B][1][0] = 1
-			elif len(names[entry][0] == 3):
+			elif len(names[entry][0]) == 3:
 				for row in names[entry]:
-					A = row[0]
-					B = row[1]
-					C = row[2]
+					A =int(row[0])
+					B = int(row[1])
+					C = int(row[2])
 					truthtable[A][B][C][0] = 1
 					truthtable[A][B][C][1] = 1
-			elif len(names[entry][0] == 1):
+			elif len(names[entry][0]) == 1:
 				for row in names[entry]:
-					A = row[0]
+					A = int(row[0])
 					truthtable[A][0][0][0] = 1
 					truthtable[A][0][0][1] = 1
 					truthtable[A][0][1][1] = 1
@@ -197,10 +195,10 @@ def tt_translate(): #translates from list/string representation to 4D array
 
 		elif len(names[entry][0] == 4): #if equal to 4
 			for row in names[entry]:
-				A = row[0]
-				B = row[1]
-				C = row[2]
-				D = row[3]
+				A = int(row[0])
+				B = int(row[1])
+				C = int(row[2])
+				D = int(row[3])
 				truthtable[A][B][C][D] = 1
 		else:
 			printf("Representing this into a 4x4 array is beyond this program.")
@@ -230,27 +228,58 @@ def sop_c(): #turns truet into a string with accurate variable names
 		canonicals.append(canoneqn)
 	return canonicals
 
-def pos_c(): #TODO make into variable names FIX
+def pos_c(): #turns TT into POS
 	canonicals = []
-	global names
-	for entry in names:
-		canonicaleqn = "G=("
-		for row in names[entry]:
-			print(row)
-			row_dupe = '+'.join(row)
-			for i in range(len(row_dupe)):
-				if row_dupe[i] == 1:
-					row_dupe[i] = 0
-				elif row_dupe[i] == 0:
-					row_dupe[i] = 1
-				else:
-					pass
-			canonicaleqn += row_dupe +")("
-		canonicaleqn = canonicaleqn[:-1]
-		canonicals.append(canonicaleqn)
-	return canonicals
+	global names_tt
+	for entry in names_tt:
+		canoneqn = ""
+		maxterms=[]
+		variables = entry.split()
+		canoneqn += f"{variables[-1]}= ("
+		variables.pop()
 
-#def demorgan(): #idk if i need to do this afterall
+		tt = names_tt[entry]
+		#gather max terms
+		if len(variables) == 4:
+			for A in range(2):
+				for B in range(2):
+					for C in range(2):
+						for D in range(2):
+							if tt[A][B][C][D] == 0:
+								maxterms.append(str(A)+str(B)+str(C)+str(D))
+		elif len(variables) == 3:
+			D = 0
+			for A in range(2):
+				for B in range(2):
+					for C in range(2):
+						if tt[A][B][C][D] == 0:
+							maxterms.append(str(A)+str(B)+str(C))
+		elif len(variables) == 2:
+			C = 0
+			D = 0
+			for A in range(2):
+				for B in range(2):
+					if tt[A][B][C][D] == 0:
+						maxterms.append(str(A)+str(B))
+		else:
+			print("Something is wrong in POS")
+		maxterms=list(set(maxterms))
+		#turn to a string
+		print("Var:")
+		print(variables)
+		for term in maxterms:
+			term_dupe = list(term)
+			for i in range(len(term)):
+				if term[i] == '1':
+					term_dupe[i] = variables[i]
+				elif term[i] == '0':
+					term_dupe[i] = variables[i]+"'"
+				else:
+					print("Something is wrong in POS during text translation")
+			canoneqn +='+'.join(term_dupe)+")("
+		canoneqn = canoneqn[:-1]
+		canonicals.append(canoneqn)
+	return canonicals
 
 def inverse_sop(sops): #takes the SOP string and inverts the literals
 	inverts = []
