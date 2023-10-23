@@ -1,9 +1,9 @@
 # Logic Synthesis Engine
 
 ## Files
-**ec551p1.py :** This is the program which is responsible for taking user input and runs the canonical outputs
-**program1.py :** This program generates graphics and minimizes expressions using the tabular method.
-__ *.blif :__ These are demo files. The bool was arbitarily generated and checked by hand. The adder comes from blif documentation. [^1]
+**ec551p1.py :**  This is the program which is responsible for taking user input and runs the canonical outputs
+**program1.py :**  This program generates graphics and minimizes expressions using the tabular method.
+There are also two demo blif files. The bool.blif was arbitarily generated and checked by hand. The adder.blif comes from blif documentations. [^1]
 
 ## About
 This program takes a blif file, and based on user commands can:
