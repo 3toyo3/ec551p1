@@ -2,26 +2,26 @@ import numpy as np
 
 
 #For testing
-truthtable=np.zeros((2,2,2,2))
-truthtable[0][0][0][0]=0
-truthtable[0][0][0][1]=0
-truthtable[0][0][1][0]=0
-truthtable[0][0][1][1]=0
+#truthtable=np.zeros((2,2,2,2))
+#truthtable[0][0][0][0]=0
+#truthtable[0][0][0][1]=0
+#truthtable[0][0][1][0]=0
+#truthtable[0][0][1][1]=0
 
-truthtable[0][1][0][0]=0
-truthtable[0][1][0][1]=0
-truthtable[0][1][1][0]=1
-truthtable[0][1][1][1]=0
+#truthtable[0][1][0][0]=0
+#truthtable[0][1][0][1]=0
+#truthtable[0][1][1][0]=1
+#truthtable[0][1][1][1]=0
 
-truthtable[1][0][0][0]=1
-truthtable[1][0][0][1]=0
-truthtable[1][0][1][0]=0
-truthtable[1][0][1][1]=1
+#truthtable[1][0][0][0]=1
+#truthtable[1][0][0][1]=0
+#truthtable[1][0][1][0]=0
+#truthtable[1][0][1][1]=1
 
-truthtable[1][1][0][0]=0
-truthtable[1][1][0][1]=1
-truthtable[1][1][1][0]=0
-truthtable[1][1][1][1]=0
+#truthtable[1][1][0][0]=0
+#truthtable[1][1][0][1]=1
+#truthtable[1][1][1][0]=0
+#truthtable[1][1][1][1]=0
 
 
 #This function counts the number of on-set minterms and maxterms
@@ -532,40 +532,40 @@ def print_coverage_table(p_implicants, ep_implicants,truthtable):
 
 
 ############################################### HW Deliverables #########################################################
-sample=prime_implicants(truthtable)
-sample1=essential_prime_implicants(sample)
+#sample=prime_implicants(truthtable)
+#sample1=essential_prime_implicants(sample)
 
 
 #5: Sum of Products
-print('Sum of Products:')
-preserved_prime_implicants=sample.copy()
-print(format_sop(choose_terms(sample,sample1,truthtable)))
-print()
+#print('Sum of Products:')
+#preserved_prime_implicants=sample.copy()
+#print(format_sop(choose_terms(sample,sample1,truthtable)))
+#print()
 
 #6: Product of Sums
-sample_inv=prime_implicants(inv(truthtable))
-sample_inv1=essential_prime_implicants(sample_inv)
+#sample_inv=prime_implicants(inv(truthtable))
+#sample_inv1=essential_prime_implicants(sample_inv)
 
-print('Product of Sums')
-print(format_pos(choose_terms(sample_inv,sample_inv1,inv(truthtable))))
-print()
+#print('Product of Sums')
+#print(format_pos(choose_terms(sample_inv,sample_inv1,inv(truthtable))))
+#print()
 
 #7: Number of Prime Implicants
-print("There are "+str(len(preserved_prime_implicants)+len(sample1))+" prime implicants")
+#print("There are "+str(len(preserved_prime_implicants)+len(sample1))+" prime implicants")
 
 #8: Number of Essential Prime Implicants
-print("There are "+str(len(sample1))+" essential prime implicants")
+#print("There are "+str(len(sample1))+" essential prime implicants")
 
 #9: On Minterms
-print('There are '+str(count_terms(truthtable)[0])+' On-set minterms')
+#print('There are '+str(count_terms(truthtable)[0])+' On-set minterms')
 
 #10: On Maxterms
-print('There are '+str(count_terms(truthtable)[1])+' On-set maxterms')
+#print('There are '+str(count_terms(truthtable)[1])+' On-set maxterms')
 
 #11: Print K map
-print_truthtable(truthtable)
-print()
-print()
+#print_truthtable(truthtable)
+#print()
+#print()
 
 #12: Print Coverage Table
-print_coverage_table(preserved_prime_implicants, sample1,truthtable)
+#print_coverage_table(preserved_prime_implicants, sample1,truthtable)
