@@ -153,26 +153,36 @@ def truet(): #make truth table for each name, clean up lines and expand for list
 			if cleanline.endswith('1'):
 				cleanline = cleanline[:-1].rstrip()
 				truet.append(cleanline)
-		expanded=[]
+
 		ref_truet = truet[:]
 
 		#expand dont cares
 		for row in ref_truet:
+			expanded = []
 			if '-' in row:
-				expand_row = list(row)
+				hyphenate = []
+				hyphenate.append(row)
 				truet.remove(row)
 
+				hyphen = 2**row.count('-') #possibilities
 				#replace multiple dont cares
-				for i, char in enumerate(expand_row):
-					if char == '-':
-						expand_row[i]='0'
+				while len(expanded) != hyphen:
+					expand_row = list(hyphenate.pop(0))
+					x = expand_row.index('-')
+					expand_row[x]='0'
+					if expand_row.count('-')==0:
 						expanded.append(''.join(expand_row))
-						expand_row[i]='1'
+						expand_row[x]='1'
 						expanded.append(''.join(expand_row))
+					else:
+						hyphenate.append(''.join(expand_row))
+						expand_row[x]='1'
+						hyphenate.append(''.join(expand_row))
+			truet.extend(expanded)
 		ref_truet.clear()
 
 		# add back expanded and put in ref for later
-		truet.extend(expanded)
+			#truet.extend(expanded)
 		#print("Truth table for " + entry)
 		truet = list(set(truet)) #removes dupes
 		#print(truet)
@@ -285,8 +295,6 @@ def pos_c(): #turns TT into POS
 			print("Something is wrong in POS")
 		maxterms=list(set(maxterms))
 		#turn to a string
-		print("Var:")
-		print(variables)
 		for term in maxterms:
 			term_dupe = list(term)
 			for i in range(len(term)):
