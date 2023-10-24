@@ -27,6 +27,7 @@ There are a few comments throughout the code explaining what is happening. First
 generated and stored within a dictionary entry, with the list of variables as the key. There are two dictionaries used, the first stores the truth table as a list of numerical strings 'names', and the second stores it as a 2D array 'names_tt'. The program then uses each entry (aka name section) to generate
  strings for the canonical representations.
 #### program.py
+This file contains all the functions necessary to complete deliverables 5-12.  It also contains many helper functions utlized by the main functions.  In order to find essential prime implicants, it follows the tabular method.  Note that to find the minimized POS and SOP, one function is utilized and the formatting is handled later.
 
 ## References
 [^1] https://course.ece.cmu.edu/~ee760/760docs/blif.pdf
