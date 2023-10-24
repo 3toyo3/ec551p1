@@ -30,5 +30,5 @@ generated and stored within a dictionary entry, with the list of variables as th
 This file contains all the functions necessary to complete deliverables 5-12.  It also contains many helper functions utlized by the main functions.  In order to find essential prime implicants, it follows the tabular method.  Note that to find the minimized POS and SOP, one function is utilized and the formatting is handled later.
 
 ## References
-[^1] https://course.ece.cmu.edu/~ee760/760docs/blif.pdf
-[^2] https://www.tutorialspoint.com/digital_circuits/digital_circuits_encoders.htm
+[^1]: https://course.ece.cmu.edu/~ee760/760docs/blif.pdf
+[^2]: https://www.tutorialspoint.com/digital_circuits/digital_circuits_encoders.htm
