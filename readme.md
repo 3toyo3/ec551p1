@@ -8,7 +8,7 @@ This program takes a blif file[^1], and based on user commands can:
 4. Print the # of prime implicants, essential prime implicants, onset maxterms and onset minterms
 5. Output a graphical Kmap and tabular method representation
 
-A few limitations of this program is that it doesn't recognize blif syntax outside of: names, model, input, outputs. It also can't work with functions that have more than four inputs. 
+A few limitations of this program is that it doesn't recognize blif syntax outside of: names, model, input, outputs. It also can't work with functions that have more than four inputs.
 
 ## Files
 **ec551p1.py :**  This is the program which is responsible for taking user input and runs the canonical outputs
@@ -17,7 +17,7 @@ A few limitations of this program is that it doesn't recognize blif syntax outsi
 **program1.py :**  This program generates graphics and minimizes expressions using the tabular method.
 
 
-There are also two demo blif files. The bool.blif was arbitarily generated and checked by hand. The adder.blif comes from blif documentations. [^1]
+There are also two demo blif files. The bool.blif was arbitarily generated and checked by hand. The priorityEncoder.blif acts as an example of a circuit. The blif file references this. [^2]
 
 ## How to read the code
 The code is seperated into two modules simply due to time/collaboration reasons
@@ -30,3 +30,4 @@ generated and stored within a dictionary entry, with the list of variables as th
 
 ## References
 [^1] https://course.ece.cmu.edu/~ee760/760docs/blif.pdf
+[^2] https://www.tutorialspoint.com/digital_circuits/digital_circuits_encoders.htm

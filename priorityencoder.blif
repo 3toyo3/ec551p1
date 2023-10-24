@@ -1,0 +1,19 @@
+.model priorityEncoder
+.inputs a3, a2, a1, a0
+.outputs y1 y0 v
+
+.names a3 a2 a1 a0 y1
+001- 0
+01-- 1
+1--- 1
+
+.names a3 a2 a1 a0 y0
+001- 1
+01-- 0
+1--- 1
+
+.names a3 a2 a1 a0 y0
+0001 1
+001- 1
+01-- 1
+1--- 1
