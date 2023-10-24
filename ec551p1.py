@@ -54,15 +54,20 @@ def main():
 			sample1 = essential_prime_implicants(sample,truthtable)
 			preserved_prime_implicants = sample.copy()
 			print(format_sop(choose_terms(sample,sample1,truthtable)))
+			print("Saved number of literals for: " + entry)
+			#put here
+			
 	#6. return a minimized number of literals representation in pos
 	elif command == "6":
 		print("Minimized POS(s):")
 		for entry in names_tt:
 			truthtable = names_tt[entry]
-			print("Saved literals:")
 			sample_inv=prime_implicants(inv(truthtable))
 			sample_inv1=essential_prime_implicants(sample_inv,truthtable)
 			print(format_pos(choose_terms(sample_inv,sample_inv1,inv(truthtable))))
+			print("Saved number of literals for: "+ entry)
+			#put here
+			
 	#7. return the number of prime implicants
 	elif command == "7":
 		for entry in names_tt:
